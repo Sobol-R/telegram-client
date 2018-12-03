@@ -2,6 +2,7 @@ package com.banana.y17_2.telegram.data;
 
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 
 import com.banana.y17_2.telegram.BuildConfig;
 import com.banana.y17_2.telegram.Constants;
@@ -9,29 +10,33 @@ import com.banana.y17_2.telegram.Constants;
 import org.drinkless.td.libcore.telegram.Client;
 import org.drinkless.td.libcore.telegram.TdApi;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class TelegramManager implements Client.ExceptionHandler, Client.ResultHandler {
 
     private static TelegramManager sInstance;
     private Context mContext;
+    private List<Client.ResultHandler> mResultHandler = new ArrayList<>();
 
     private Client mClient;
 
-    private TelegramManager(Context context) {
-        mContext = context;
-    }
-
-    public static TelegramManager getInstance(Context context) {
+    public static TelegramManager getInstance() {
         if (sInstance == null) {
-            sInstance = new TelegramManager(context);
+            sInstance = new TelegramManager();
         }
         return sInstance;
     }
 
-    public void initialize() {
+    public void initialize(Context context) {
         mClient = Client.create(this, this, this);
+        mContext = context;
     }
+
+//  //  public void initialize() {
+//        mClient = Client.create(this, this, this);
+//    }
 
     @Override
     public void onResult(TdApi.Object object) {
@@ -40,11 +45,23 @@ public class TelegramManager implements Client.ExceptionHandler, Client.ResultHa
                 onUpdateAuthorizationState(((TdApi.UpdateAuthorizationState) object).authorizationState);
                 break;
         }
+
+        for (Client.ResultHandler resultHandler : mResultHandler) {
+            resultHandler.onResult(object);
+        }
     }
 
     @Override
     public void onException(Throwable e) {
+        Log.e("TAG", "onException", e);
+    }
 
+    public void setmResultHandler(Client.ResultHandler resultHandler) {
+        mResultHandler.add(resultHandler);
+    }
+
+    public void removemResultHandler(Client.ResultHandler resultHandler) {
+        mResultHandler.remove(resultHandler);
     }
 
     private void onUpdateAuthorizationState(TdApi.AuthorizationState authorizationState) {
@@ -69,6 +86,10 @@ public class TelegramManager implements Client.ExceptionHandler, Client.ResultHa
                 mClient.send(new TdApi.SetDatabaseEncryptionKey(), this);
                 break;
         }
+    }
+
+    public void sendPhoneNumber(String phoneNumber) {
+        mClient.send(new TdApi.SetAuthenticationPhoneNumber(phoneNumber, false, false), this);
     }
 
 }

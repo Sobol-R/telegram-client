@@ -1,0 +1,82 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.banana.y17_2.telegram.ui.EnteringPinFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/phone_bg"
+            android:layout_marginTop="50dp"
+            android:padding="20dp"
+            android:background="@drawable/phone_bg"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:background="@drawable/ic_check_black_24dp"
+                android:backgroundTint="@color/colorPrimary"
+                android:layout_width="40dp"
+                android:layout_height="40dp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:textSize="25dp"
+            android:layout_marginTop="20dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/phone_bg"
+            android:text="Enter your PIN"
+            android:textColor="@color/colorPrimary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/entering_phone_desc"
+            android:gravity="center"
+            android:layout_marginRight="30dp"
+            android:layout_marginLeft="30dp"
+            android:textSize="18dp"
+            android:layout_marginTop="60dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/phone_bg"
+            android:text="Enter the PIN form the sms"
+            android:textColor="#B1B1B1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:hint="1234"
+            android:focusable="true"
+            android:textSize="25dp"
+            android:gravity="center"
+            android:inputType="number"
+            android:digits="0123456789"
+            android:layout_margin="20dp"
+            android:layout_below="@+id/entering_phone_desc"
+            android:id="@+id/pin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:background="@drawable/send_pin_button_bg"
+            android:textColor="#FFF"
+            android:textSize="20dp"
+            android:paddingRight="40dp"
+            android:paddingLeft="40dp"
+            android:text="Send PIN"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/pin"
+            android:id="@+id/send_pin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
+</FrameLayout>
