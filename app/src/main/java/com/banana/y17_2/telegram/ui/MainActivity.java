@@ -1,6 +1,7 @@
 package com.banana.y17_2.telegram.ui;
 
 import android.content.Context;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.inputmethod.InputMethodManager;
@@ -38,11 +39,19 @@ public class MainActivity extends AppCompatActivity implements Client.ResultHand
         if (object.getConstructor() == TdApi.UpdateAuthorizationState.CONSTRUCTOR) {
             final TdApi.AuthorizationState authorizationState = ((TdApi.UpdateAuthorizationState) object).authorizationState;
             if (authorizationState.getConstructor() == TdApi.AuthorizationStateWaitPhoneNumber.CONSTRUCTOR) {
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragments_container, new EnteringPhoneFragment())
-                        .commit();
+                showFragment(new EnteringPhoneFragment());
+            } else if (authorizationState.getConstructor() == TdApi.AuthorizationStateWaitCode.CONSTRUCTOR) {
+                showFragment(new EnteringPinFragment());
+            } else if (authorizationState.getConstructor() == TdApi.AuthorizationStateReady.CONSTRUCTOR) {
+                // TODO FRAGMENT WITH CHATS
             }
         }
+    }
+
+    private void showFragment(Fragment fragment) {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragments_container, fragment)
+                .commit();
     }
 }

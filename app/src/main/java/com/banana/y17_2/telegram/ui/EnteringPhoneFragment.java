@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.inputmethodservice.Keyboard;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -45,7 +46,6 @@ public class EnteringPhoneFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         final EditText editText = view.findViewById(R.id.phone_number);
         final Button button = view.findViewById(R.id.get_pin);
-        UIUtil.showKeyboard(getContext(), editText);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,6 +53,14 @@ public class EnteringPhoneFragment extends Fragment {
                 TelegramManager.getInstance().sendPhoneNumber(editText.getText().toString());
             }
         });
+
+        (new Handler()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                AndroidUtils.showKeyboard(getContext(), editText);
+            }
+        }, 200);
     }
+
 
 }

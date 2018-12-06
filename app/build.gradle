@@ -25,4 +25,7 @@ dependencies {
     implementation project(':libtd')
     implementation 'com.android.support:support-v4:28.0.0'
     implementation 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:2.1.0'
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
+    implementation 'org.greenrobot:eventbus:3.1.1'
+
 }

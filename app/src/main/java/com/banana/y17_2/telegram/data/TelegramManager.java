@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.banana.y17_2.telegram.BuildConfig;
 import com.banana.y17_2.telegram.Constants;
+import com.banana.y17_2.telegram.ui.ChatsCache;
 
 import org.drinkless.td.libcore.telegram.Client;
 import org.drinkless.td.libcore.telegram.TdApi;
@@ -32,6 +33,7 @@ public class TelegramManager implements Client.ExceptionHandler, Client.ResultHa
     public void initialize(Context context) {
         mClient = Client.create(this, this, this);
         mContext = context;
+        ChatsCache.getInstance().initialize();
     }
 
 //  //  public void initialize() {
@@ -90,6 +92,14 @@ public class TelegramManager implements Client.ExceptionHandler, Client.ResultHa
 
     public void sendPhoneNumber(String phoneNumber) {
         mClient.send(new TdApi.SetAuthenticationPhoneNumber(phoneNumber, false, false), this);
+    }
+
+    public void sendCode(String code) {
+        mClient.send(new TdApi.CheckAuthenticationCode(code, null, null), this);
+    }
+
+    public void requestChats() {
+        mClient.send(new TdApi.GetChats(Long.MAX_VALUE, 0, 42), this);
     }
 
 }
