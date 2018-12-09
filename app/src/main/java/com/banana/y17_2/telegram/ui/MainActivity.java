@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements Client.ResultHand
             } else if (authorizationState.getConstructor() == TdApi.AuthorizationStateWaitCode.CONSTRUCTOR) {
                 showFragment(new EnteringPinFragment());
             } else if (authorizationState.getConstructor() == TdApi.AuthorizationStateReady.CONSTRUCTOR) {
-                // TODO FRAGMENT WITH CHATS
+                showFragment(new ChatsFragment());
             }
         }
     }

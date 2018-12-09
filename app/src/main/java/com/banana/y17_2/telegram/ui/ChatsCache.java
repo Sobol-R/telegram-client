@@ -13,7 +13,7 @@ public class ChatsCache implements ResultHandler{
 
     private static ChatsCache sInstance;
 
-    private final List<TdApi.Chat> mChats = new ArrayList<TdApi.Chat>();
+    public final List<TdApi.Chat> mChats = new ArrayList<TdApi.Chat>();
 
     public static ChatsCache getInstance() {
         if (sInstance == null) {
