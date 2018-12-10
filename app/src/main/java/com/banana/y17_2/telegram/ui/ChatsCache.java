@@ -33,7 +33,27 @@ public class ChatsCache implements ResultHandler{
             mChats.add(((TdApi.UpdateNewChat) object).chat);
 
             EventBus.getDefault().post(new ChatsChangedEvent(mChats));
+        } else if (object.getConstructor() == TdApi.UpdateChatLastMessage.CONSTRUCTOR) {
+            for (TdApi.Chat chat : mChats) {
+                if (chat.id == ((TdApi.UpdateChatLastMessage) object).chatId) {
+                    chat.lastMessage = ((TdApi.UpdateChatLastMessage) object).lastMessage;
+                    break;
+                }
+
+            }
+        } else if (object.getConstructor() == TdApi.UpdateFile.CONSTRUCTOR) {
+            for (TdApi.Chat chat : mChats) {
+                if (chat.photo.small.id == ((TdApi.UpdateFile) object).file.id) {
+                    chat.photo.small = ((TdApi.UpdateFile) object).file;
+                    emitChatsHCngeEvent();
+                    break;
+                }
+            }
         }
+    }
+
+    private void emitChatsHCngeEvent() {
+        EventBus.getDefault().post(new ChatsChangedEvent(mChats));
     }
 
     public static class ChatsChangedEvent {
