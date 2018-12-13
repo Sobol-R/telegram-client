@@ -7,7 +7,10 @@ import org.drinkless.td.libcore.telegram.TdApi;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ChatsCache implements ResultHandler{
 
@@ -22,10 +25,11 @@ public class ChatsCache implements ResultHandler{
         return sInstance;
     }
 
+    private Map <Long, List<TdApi.Message>> mMessages = new HashMap<>();
+
     public void initialize() {
         TelegramManager.getInstance().setmResultHandler(this);
     }
-
 
     @Override
     public void onResult(TdApi.Object object) {
@@ -49,6 +53,18 @@ public class ChatsCache implements ResultHandler{
                     break;
                 }
             }
+        } else if (object.getConstructor() == TdApi.Message.CONSTRUCTOR) {
+            final TdApi.Message[] newMessages = ((TdApi.Messages) object).messages;
+            if (newMessages.length > 0) {
+                Long chatId = newMessages[0].chatId;
+                List <TdApi.Message> oldMessages = mMessages.get(chatId);
+                if (oldMessages == null) {
+                    oldMessages = new ArrayList<>();
+                    mMessages.put(chatId, oldMessages);
+                }
+
+                Collections.addAll(oldMessages, newMessages);
+            }
         }
     }
 
@@ -61,6 +77,24 @@ public class ChatsCache implements ResultHandler{
 
         public ChatsChangedEvent(List<TdApi.Chat> chats) {
             this.chats = chats;
+        }
+    }
+
+    public static class MessageChageEvent {
+        private final long chatId;
+        private final List<TdApi.Message> messages;
+
+        public MessageChageEvent(long chatId, List<TdApi.Message> messages) {
+            this.chatId = chatId;
+            this.messages = messages;
+        }
+
+        public long getChatId() {
+            return chatId;
+        }
+
+        public List<TdApi.Message> getMessages() {
+            return messages;
         }
     }
 }

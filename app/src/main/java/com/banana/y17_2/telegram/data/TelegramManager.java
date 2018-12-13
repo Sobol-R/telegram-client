@@ -70,9 +70,9 @@ public class TelegramManager implements Client.ExceptionHandler, Client.ResultHa
         mClient.send(new TdApi.DownloadFile(fileId, priority), this);
     }
 
-//    public void requestMessage(long chatId, int priority) {
-//        mClient.send(new TdApi.Request(chatId, priority), this);
-//    }
+    public void requestMessage(long chatId, long fromMessageId) {
+        mClient.send(new TdApi.GetChatHistory(chatId, fromMessageId, 0, 42, false), this);
+    }
 
 
     private void onUpdateAuthorizationState(TdApi.AuthorizationState authorizationState) {

@@ -36,7 +36,7 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsHolder> {
     @Override
     public void onBindViewHolder(@NonNull ChatsHolder chatsHolder, int i) {
         ChatsCache chatsCache = ChatsCache.getInstance();
-        TdApi.Chat chat = chatsCache.mChats.get(i);
+        final TdApi.Chat chat = chatsCache.mChats.get(i);
 
         chatsHolder.name.setText(chat.title);
         if (chatsCache.mChats.get(i).lastMessage != null &&
@@ -57,6 +57,14 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsHolder> {
                 TelegramManager.getInstance().downloadFile(chat.photo.small.id, 32);
             }
         }
+
+        chatsHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ChatFragment chatFragment = ChatFragment.newInstance(chat.id);
+                mainActivity.showFragment(chatFragment);
+            }
+        });
     }
 
     @Override

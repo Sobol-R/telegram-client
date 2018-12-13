@@ -48,10 +48,11 @@ public class MainActivity extends AppCompatActivity implements Client.ResultHand
         }
     }
 
-    private void showFragment(Fragment fragment) {
+    public void showFragment(Fragment fragment) {
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragments_container, fragment)
+                .addToBackStack(null)
                 .commit();
     }
 }
