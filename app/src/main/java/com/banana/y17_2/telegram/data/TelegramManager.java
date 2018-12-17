@@ -70,11 +70,6 @@ public class TelegramManager implements Client.ExceptionHandler, Client.ResultHa
         mClient.send(new TdApi.DownloadFile(fileId, priority), this);
     }
 
-    public void requestMessage(long chatId, long fromMessageId) {
-        mClient.send(new TdApi.GetChatHistory(chatId, fromMessageId, 0, 42, false), this);
-    }
-
-
     private void onUpdateAuthorizationState(TdApi.AuthorizationState authorizationState) {
         switch (authorizationState.getConstructor()) {
             case TdApi.AuthorizationStateWaitTdlibParameters.CONSTRUCTOR:
@@ -109,6 +104,10 @@ public class TelegramManager implements Client.ExceptionHandler, Client.ResultHa
 
     public void requestChats() {
         mClient.send(new TdApi.GetChats(Long.MAX_VALUE, 0, 42), this);
+    }
+
+    public void requestMessage(long chatId, long fromMessageId) {
+        mClient.send(new TdApi.GetChatHistory(chatId, fromMessageId, 0, 42, false), this);
     }
 
 }

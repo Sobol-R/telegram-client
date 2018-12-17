@@ -56,14 +56,14 @@ public class ChatsCache implements ResultHandler{
         } else if (object.getConstructor() == TdApi.Message.CONSTRUCTOR) {
             final TdApi.Message[] newMessages = ((TdApi.Messages) object).messages;
             if (newMessages.length > 0) {
-                Long chatId = newMessages[0].chatId;
+                long chatId = newMessages[0].chatId;
                 List <TdApi.Message> oldMessages = mMessages.get(chatId);
                 if (oldMessages == null) {
                     oldMessages = new ArrayList<>();
                     mMessages.put(chatId, oldMessages);
                 }
-
                 Collections.addAll(oldMessages, newMessages);
+                emitMessagesChangedEvent(chatId);
             }
         }
     }
@@ -80,11 +80,15 @@ public class ChatsCache implements ResultHandler{
         }
     }
 
-    public static class MessageChageEvent {
+    private void emitMessagesChangedEvent(long chatId) {
+        EventBus.getDefault().post(new MessageChangeEvent(chatId, mMessages.get(chatId)));
+    }
+
+    public static class MessageChangeEvent {
         private final long chatId;
         private final List<TdApi.Message> messages;
 
-        public MessageChageEvent(long chatId, List<TdApi.Message> messages) {
+        public MessageChangeEvent(long chatId, List<TdApi.Message> messages) {
             this.chatId = chatId;
             this.messages = messages;
         }

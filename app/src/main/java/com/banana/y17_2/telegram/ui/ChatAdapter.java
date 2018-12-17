@@ -7,46 +7,59 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.banana.y17_2.telegram.R;
+import com.banana.y17_2.telegram.data.TelegramManager;
 
 import org.drinkless.td.libcore.telegram.TdApi;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChatAdapter extends RecyclerView.Adapter<ChatsHolder> {
+public class ChatAdapter extends RecyclerView.Adapter<ChatHolder> {
 
     MainActivity mainActivity;
     RecyclerView recyclerView;
 
     List<TdApi.Message> mMessages = new ArrayList<>();
+    private final long mChatId;
 
-    public ChatAdapter(MainActivity mainActivity) {
+    public ChatAdapter(MainActivity mainActivity, long chatId) {
         this.mainActivity = mainActivity;
+        mChatId = chatId;
     }
 
     @NonNull
     @Override
-    public ChatsHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public ChatHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         LayoutInflater layoutInflater = LayoutInflater.from(mainActivity);
         View view = layoutInflater.inflate(R.layout.message_item, viewGroup, false);
-        ChatsHolder chatsHolder = new ChatsHolder(view);
-        return chatsHolder;
+        ChatHolder chatHolder = new ChatHolder(view);
+        return chatHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ChatsHolder chatsHolder, int i) {
-//        final TdApi.Message message = mMessages.get(i);
-//        chatsHolder.message.setText(message.content);
-//        if (chatsCache.mChats.get(i).lastMessage != null &&
-//                chatsCache.mChats.get(i).lastMessage.content.getConstructor() == TdApi.MessageText.CONSTRUCTOR) {
-//            TdApi.MessageText messageText = (TdApi.MessageText) chatsCache.mChats.get(i).lastMessage.content;
-//            chatsHolder.message.setText(messageText.text.text);
-//        }
+    public void onBindViewHolder(@NonNull ChatHolder chatHolder, int i) {
+        final TdApi.Message message = mMessages.get(i);
+        if (message == null) {
+            final long fromMessageId = mMessages.get(mMessages.size() - 2).id;
+            TelegramManager.getInstance().requestMessage(mChatId, fromMessageId);
+        } else {
+            if (message.content.getConstructor() == TdApi.MessageText.CONSTRUCTOR) {
+                chatHolder.message.setText(((TdApi.MessageText) message.content).text.text);
+            }
+        }
+    }
+
+    public void swap(@NonNull List<TdApi.Message> messages) {
+        System.out.println("SWAAAAP");
+        mMessages.clear();
+        mMessages.addAll(messages);
+        mMessages.add(null);
+        notifyDataSetChanged();
 
     }
 
     @Override
-    public void onViewRecycled(@NonNull ChatsHolder holder) {
+    public void onViewRecycled(@NonNull ChatHolder holder) {
         super.onViewRecycled(holder);
         holder.message.setText(null);
     }
