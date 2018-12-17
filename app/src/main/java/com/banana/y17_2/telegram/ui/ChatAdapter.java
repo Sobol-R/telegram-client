@@ -2,6 +2,7 @@ package com.banana.y17_2.telegram.ui;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,15 +43,17 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatHolder> {
         if (message == null) {
             final long fromMessageId = mMessages.get(mMessages.size() - 2).id;
             TelegramManager.getInstance().requestMessage(mChatId, fromMessageId);
+            System.out.println("mess == null");
         } else {
             if (message.content.getConstructor() == TdApi.MessageText.CONSTRUCTOR) {
                 chatHolder.message.setText(((TdApi.MessageText) message.content).text.text);
+                System.out.println("mess != null");
             }
         }
+
     }
 
     public void swap(@NonNull List<TdApi.Message> messages) {
-        System.out.println("SWAAAAP");
         mMessages.clear();
         mMessages.addAll(messages);
         mMessages.add(null);
@@ -66,6 +69,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatHolder> {
 
     @Override
     public int getItemCount() {
-        return ChatsCache.getInstance().mChats.size();
+        return mMessages.size();
     }
 }

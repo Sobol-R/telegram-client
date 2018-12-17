@@ -8,6 +8,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,7 @@ public class ChatsCache implements ResultHandler{
         return sInstance;
     }
 
-    private Map <Long, List<TdApi.Message>> mMessages = new HashMap<>();
+    private Map <Long, Map<Long, TdApi.Message>> mMessages = new HashMap<>();
 
     public void initialize() {
         TelegramManager.getInstance().setmResultHandler(this);
@@ -53,17 +54,33 @@ public class ChatsCache implements ResultHandler{
                     break;
                 }
             }
-        } else if (object.getConstructor() == TdApi.Message.CONSTRUCTOR) {
+        } else if (object.getConstructor() == TdApi.Messages.CONSTRUCTOR) {
             final TdApi.Message[] newMessages = ((TdApi.Messages) object).messages;
             if (newMessages.length > 0) {
                 long chatId = newMessages[0].chatId;
-                List <TdApi.Message> oldMessages = mMessages.get(chatId);
+                Map <Long, TdApi.Message> oldMessages = mMessages.get(chatId);
                 if (oldMessages == null) {
-                    oldMessages = new ArrayList<>();
+                    oldMessages = new HashMap<>();
                     mMessages.put(chatId, oldMessages);
                 }
-                Collections.addAll(oldMessages, newMessages);
-                emitMessagesChangedEvent(chatId);
+
+                for (TdApi.Message newMessage : newMessages) {
+                    oldMessages.put(newMessage.id, newMessage);
+                }
+
+                final List<TdApi.Message> resultMessages = new ArrayList<>();
+                for (TdApi.Message message : oldMessages.values()) {
+                    resultMessages.add(message);
+                }
+
+                Collections.sort(resultMessages, new Comparator<TdApi.Message>() {
+                    @Override
+                    public int compare(TdApi.Message m1, TdApi.Message m2) {
+                        return Long.compare(m2.id, m1.id);
+                    }
+                });
+
+                emitMessagesChangedEvent(chatId, resultMessages);
             }
         }
     }
@@ -80,8 +97,8 @@ public class ChatsCache implements ResultHandler{
         }
     }
 
-    private void emitMessagesChangedEvent(long chatId) {
-        EventBus.getDefault().post(new MessageChangeEvent(chatId, mMessages.get(chatId)));
+    private void emitMessagesChangedEvent(long chatId, List<TdApi.Message> resultMessages) {
+        EventBus.getDefault().post(new MessageChangeEvent(chatId, resultMessages));
     }
 
     public static class MessageChangeEvent {

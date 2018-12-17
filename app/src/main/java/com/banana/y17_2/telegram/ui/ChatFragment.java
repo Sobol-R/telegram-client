@@ -48,7 +48,7 @@ public class ChatFragment extends Fragment {
         final long chatId = getArguments().getLong("EXTRA_CHAT_ID");
         chatAdapter = new ChatAdapter((MainActivity) getActivity(), chatId);
         recyclerView = view.findViewById(R.id.chat_recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, true));
         recyclerView.setAdapter(chatAdapter);
     }
 
@@ -70,7 +70,7 @@ public class ChatFragment extends Fragment {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(ChatsCache.MessageChangeEvent event) {
+    public void onMessageChangeEvent(ChatsCache.MessageChangeEvent event) {
         chatAdapter.swap(event.getMessages());
     }
 
